@@ -75,7 +75,7 @@ app.use((req, res, next) => {
 });
 
 
-app.get('/ivrs/enquiries', (req, res) => {
+app.get('/facebook/enquiries', (req, res) => {
   const db = createConnection(); // Create a new connection instance
 
   const query = 'SELECT * FROM addleads ORDER BY created_at DESC';
