@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
+const { createConnection } = require("./db");
 const nodemailer = require('nodemailer');
 
 const { syncData } = require('./facebooksheet2');
@@ -18,7 +19,7 @@ const io = new Server(server, {
   transports: ['websocket', 'polling'],
 });
 
-const PORT = 4001;
+const PORT = 4003;
 
 // Email Configuration
 const transporter = nodemailer.createTransport({
@@ -73,6 +74,22 @@ app.use((req, res, next) => {
   next();
 });
 
+
+app.get('/enquiries', (req, res) => {
+  const db = createConnection(); // Create a new connection instance
+
+  const query = 'SELECT * FROM addleads ORDER BY created_at DESC';
+
+  db.query(query, (err, results) => {
+    db.end(); // Close connection after query execution
+
+    if (err) {
+      console.error('Error fetching enquiries:', err);
+      return res.status(500).json({ message: 'Error fetching enquiries' });
+    }
+    res.json(results);
+  });
+});
 
 
 // WebSocket connection
